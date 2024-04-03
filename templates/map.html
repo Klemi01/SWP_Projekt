@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interaktive Karte</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvHm7r3FkKjrHkV655xnEowINlYcb5nkI
+    &callback=initMap&v=weekly" defer></script>
+    <script>
+        let map;
+
+        function initMap() {
+            const vienna = { lat: 48.2083, lng: 16.3731 };
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: vienna
+            });
+
+            map.addListener('click', function(e) {
+                promptForMarker(e.latLng);
+            });
+        }
+
+        function promptForMarker(location) {
+            const name = prompt("Geben Sie den Namen des Markers ein:");
+            const description = prompt("Geben Sie eine Beschreibung ein:");
+            if (name && description) {
+                createMarker(location, name, description);
+            }
+        }
+
+        function createMarker(location, name, description) {
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+
+            const infowindowContent = `<div id="content">
+                <h1 id="firstHeading">${name}</h1>
+                <div id="bodyContent">
+                    <p>${description}</p>
+                    <button onclick="document.getElementById('deleteMarker').click()">Marker löschen</button>
+                </div>
+            </div>`;
+
+            const infowindow = new google.maps.InfoWindow({
+                content: infowindowContent
+            });
+
+            marker.addListener('click', function() {
+                infowindow.open(map, marker);
+            });
+
+            // Unsichtbarer Button zum Löschen des Markers
+            const deleteButton = document.createElement('button');
+            deleteButton.style.display = 'none';
+            deleteButton.id = 'deleteMarker';
+            document.body.appendChild(deleteButton);
+
+            deleteButton.addEventListener('click', function() {
+                marker.setMap(null);
+                infowindow.close();
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="map" style="height: 650px; width: 100%;"></div>
+</body>
+</html>
