@@ -33,6 +33,16 @@
                 map: map
             });
 
+            // Insert the new marker into the SQLite database
+            const insertMarkerQuery = `INSERT INTO markers (name, description, lat, lng) VALUES (?,?,?,?)`;
+            const insertMarkerParams = [name, description, location.lat(), location.lng()];
+            db.transaction((tx) => {
+                tx.executeSql(insertMarkerQuery, insertMarkerParams, (tx, result) => {
+                    console.log("Marker inserted successfully");
+                }, (tx, error) => {
+                    console.log("Error inserting marker: " + error.message);
+                });q
+            });
             const infowindowContent = `<div id="content">
                 <h1 id="firstHeading">${name}</h1>
                 <div id="bodyContent">
